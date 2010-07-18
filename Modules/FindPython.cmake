@@ -2,6 +2,7 @@
 # This module searches for both the python interpreter and the python libraries
 # and determines where they are located
 #
+#
 #  Python_FOUND - The requested Python components were found
 #  Python_EXECUTABLE  - path to the Python interpreter
 #
@@ -30,7 +31,7 @@ ENDIF("3" STREQUAL "${Python_FIND_VERSION_MAJOR}")
 # This is  heavily inspired by FindBoost.cmake, with the addition of a second version list to keep
 # python 2 and python 3 separate
 IF(Python_FIND_VERSION_EXACT)
-  SET(_Python_TEST_VERSIONS "${Python_FIND_VERSION_MAJOR}"."${Python_FIND_VERSION_MINOR}")
+  SET(_Python_TEST_VERSIONS "${Python_FIND_VERSION_MAJOR}.${Python_FIND_VERSION_MINOR}")
 ELSE(Python_FIND_VERSION_EXACT)
   SET(_Python_3_KNOWN_VERSIONS ${Python_3_ADDITIONAL_VERSIONS}
     "3.1" "3.0")
@@ -85,9 +86,9 @@ IF(Python_FIND_VERSION AND Python_EXECUTABLE AND ${_Python_EXENAME} STREQUAL "py
   EXEC_PROGRAM("${Python_EXECUTABLE}" ARGS "--version" OUTPUT_VARIABLE _Python_VERSION)
   STRING(SUBSTRING "${_Python_VERSION}" 7 3 _Python_VERSION)
   IF(Python_FIND_VERSION_EXACT)
-    IF(NOT ${_Python_VERSION} VERSION_EQUAL "${Python_FIND_VERSION_MAJOR}"."${Python_FIND_VERSION_MINOR}")
+    IF(NOT ${_Python_VERSION} VERSION_EQUAL "${Python_FIND_VERSION_MAJOR}.${Python_FIND_VERSION_MINOR}")
       SET(Python_EXECUTABLE)
-    ENDIF(NOT ${_Python_VERSION} VERSION_EQUAL "${Python_FIND_VERSION_MAJOR}"."${Python_FIND_VERSION_MINOR}")
+    ENDIF(NOT ${_Python_VERSION} VERSION_EQUAL "${Python_FIND_VERSION_MAJOR}.${Python_FIND_VERSION_MINOR}")
   ELSE(Python_FIND_VERSION_EXACT)
     IF(NOT ${_Python_VERSION} VERSION_LESS ${Python_FIND_VERSION})
       SET(Python_EXECUTABLE)

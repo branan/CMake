@@ -100,10 +100,17 @@ IF(Python_FIND_VERSION AND PYTHON_EXECUTABLE AND ${_PYTHON_EXENAME} STREQUAL "py
 ENDIF(Python_FIND_VERSION AND PYTHON_EXECUTABLE AND ${_PYTHON_EXENAME} STREQUAL "python")
 
 # Get our library path and include directory from python
-EXECUTE_PROCESS(COMMAND "${PYTHON_EXECUTABLE}" # maybe there's a simpler way to do this? I haven't found it yet
-  "-c" "import distutils.sysconfig; import sys; import os; sys.stdout.write(distutils.sysconfig.get_config_var('LIBDIR')+os.sep+distutils.sysconfig.get_config_var('LDLIBRARY'))"
-  OUTPUT_VARIABLE PYTHON_LIBRARY
-)
+IF(WIN32)
+  EXECUTE_PROCESS(COMMAND "${PYTHON_EXECUTABLE}" # maybe there's a simpler way to do this? I haven't found it yet
+    "-c" "import distutils.sysconfig; import sys; import os; sys.stdout.write(distutils.sysconfig.get_config_var('LIBDIR')+os.sep+distutils.sysconfig.get_config_var('LIBRARY'))"
+    OUTPUT_VARIABLE PYTHON_LIBRARY
+  )
+ELSE(WIN32)
+  EXECUTE_PROCESS(COMMAND "${PYTHON_EXECUTABLE}" # maybe there's a simpler way to do this? I haven't found it yet
+    "-c" "import distutils.sysconfig; import sys; import os; sys.stdout.write(distutils.sysconfig.get_config_var('LIBDIR')+os.sep+distutils.sysconfig.get_config_var('LDLIBRARY'))"
+    OUTPUT_VARIABLE PYTHON_LIBRARY
+  )
+ENDIF(WIN32)
 EXECUTE_PROCESS(COMMAND "${PYTHON_EXECUTABLE}"
   "-c" "import distutils.sysconfig; import sys; sys.stdout.write(distutils.sysconfig.get_python_inc())"
   OUTPUT_VARIABLE PYTHON_INCLUDE_DIR

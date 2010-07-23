@@ -102,33 +102,36 @@ ENDIF(Python_FIND_VERSION AND PYTHON_EXECUTABLE AND ${_PYTHON_EXENAME} STREQUAL 
 # Get our library path and include directory from python
 IF(WIN32)
   EXECUTE_PROCESS(COMMAND "${PYTHON_EXECUTABLE}" # maybe there's a simpler way to do this? I haven't found it yet
-    "-c" "import distutils.sysconfig; import sys; import os; sys.stdout.write(distutils.sysconfig.get_config_var('LIBDIR')+os.sep+distutils.sysconfig.get_config_var('LIBRARY'))"
-    OUTPUT_VARIABLE PYTHON_LIBRARY
+    "-c" "import distutils.sysconfig; import sys; import os; sys.stdout.write(distutils.sysconfig.get_config_var('LIBRARY'))"
+    OUTPUT_VARIABLE _PYTHON_LIBRARY_NAME
   )
 ELSE(WIN32)
   EXECUTE_PROCESS(COMMAND "${PYTHON_EXECUTABLE}" # maybe there's a simpler way to do this? I haven't found it yet
-    "-c" "import distutils.sysconfig; import sys; import os; sys.stdout.write(distutils.sysconfig.get_config_var('LIBDIR')+os.sep+distutils.sysconfig.get_config_var('LDLIBRARY'))"
-    OUTPUT_VARIABLE PYTHON_LIBRARY
+    "-c" "import distutils.sysconfig; import sys; import os; sys.stdout.write(distutils.sysconfig.get_config_var('LDLIBRARY'))"
+    OUTPUT_VARIABLE _PYTHON_LIBRARY_NAME
   )
 ENDIF(WIN32)
+EXECUTE_PROCESS(COMMAND "${PYTHON_EXECUTABLE}" # maybe there's a simpler way to do this? I haven't found it yet
+  "-c" "import distutils.sysconfig; import sys; import os; sys.stdout.write(distutils.sysconfig.get_config_var('LIBDIR'))"
+  OUTPUT_VARIABLE _PYTHON_LIBRARY_PATH
+)
 EXECUTE_PROCESS(COMMAND "${PYTHON_EXECUTABLE}"
   "-c" "import distutils.sysconfig; import sys; sys.stdout.write(distutils.sysconfig.get_python_inc())"
   OUTPUT_VARIABLE PYTHON_INCLUDE_DIR
 )
+
+FIND_FILE(PYTHON_LIBRARY ${_PYTHON_LIBRARY_NAME} PATHS ${_PYTHON_LIBRARY_PATH} NO_DEFAULT_PATH)
+FIND_FILE(PYTHON_HEADER "Python.h" PATHS ${PYTHON_INCLUDE_DIR} NO_DEFAULT_PATH)
 
 
 set(PYTHON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIR})
 set(PYTHON_LIBRARIES ${PYTHON_LIBRARY})
 
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Python DEFAULT_MSG PYTHON_EXECUTABLE PYTHON_INCLUDE_DIRS PYTHON_LIBRARIES)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Python DEFAULT_MSG PYTHON_EXECUTABLE PYTHON_HEADER PYTHON_LIBRARY)
 
 MARK_AS_ADVANCED(PYTHON_EXECUTABLE)
 MARK_AS_ADVANCED(PYTHON_INCLUDE_DIRS)
 MARK_AS_ADVANCED(PYTHON_LIBRARIES)
 MARK_AS_ADVANCED(PYTHON_INCLUDE_DIR)
 MARK_AS_ADVANCED(PYTHON_LIBRARY)
-
-MESSAGE(${PYTHON_INCLUDE_DIRS})
-MESSAGE(${PYTHON_LIBRARIES})
-MESSAGE(${PYTHON_EXECUTABLE})
